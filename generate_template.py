@@ -79,14 +79,11 @@ def main() -> None:
         workflow_path = Path(".github/workflows/deploy.yml")
         with workflow_path.open("r", encoding="UTF-8") as f:
             workflow = f.read()
-        wf = Template(workflow)
-        subs = wf.substitute(
-            submodule=template.submodule
-        )
+        wf=workflow.replace("FETCH_SUBMODULE: false", "FETCH_SUBMODULE: true")
         with workflow_path.open("w", encoding="UTF-8") as f:
-            f.write(subs)
+            f.write(wf)
         print("Workflow template generated:")
-        print(subs)
+        print(wf)
         print("Done!")
 
 if __name__ == "__main__":

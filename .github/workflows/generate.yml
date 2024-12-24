@@ -83,16 +83,22 @@ jobs:
           |
           auto_h1=''
           comments=''
+          submodule=''
           if [ "${{ github.event.inputs.auto_h1 }}" = "true" ]; then
             auto_h1='--auto-h1'
           fi
           if [ "${{ github.event.inputs.comments }}" = "true" ]; then
             comments='--comments'
           fi
+          if [ "${{ github.event.inputs.submodule }}" = "true" ]; then
+            submodule='--submodule'
+          fi
           echo "auto_h1=$auto_h1" >> $GITHUB_OUTPUT
           echo "comments=$comments" >> $GITHUB_OUTPUT
+          echo "submodule=$submodule" >> $GITHUB_OUTPUT
           echo "- auto_h1: $auto_h1" >> $GITHUB_STEP_SUMMARY
           echo "- comments: $comments" >> $GITHUB_STEP_SUMMARY
+          echo "- submodule: $submodule" >> $GITHUB_STEP_SUMMARY
       - name: Generate files
         run: |
           echo "📝 Generate files"
@@ -101,7 +107,7 @@ jobs:
           echo "📝 Generate files" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          python3 generate_template.py "${{github.event.inputs.site_name}}" "${{github.event.inputs.site_url}}" "${{github.event.inputs.site_description}}" "${{github.event.inputs.site_author}}" "${{github.event.inputs.language}}" ${{ steps.args.outputs.auto_h1 }} ${{ steps.args.outputs.comments }} >> $GITHUB_STEP_SUMMARY
+          uv run python generate_template.py "${{github.event.inputs.site_name}}" "${{github.event.inputs.site_url}}" "${{github.event.inputs.site_description}}" "${{github.event.inputs.site_author}}" "${{github.event.inputs.language}}" ${{ steps.args.outputs.auto_h1 }} ${{ steps.args.outputs.comments }} ${{steps.args.outputs.submodule}} >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
       - name: Pull Request
         id: cpr
@@ -124,12 +130,12 @@ jobs:
           branch: generate
           base: "main"
           delete-branch: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
       - name: AutoMerging
         id: automerge
         if: ${{ inputs.AUTO_MERGE }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash
           echo "Pull Request merged"

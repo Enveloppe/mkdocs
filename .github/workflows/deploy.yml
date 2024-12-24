@@ -20,7 +20,7 @@ permissions:
   id-token: write
 
 env:
-  FETCH_SUBMODULE: $submodule # change this to true if you use submodule for the docs
+  FETCH_SUBMODULE: false # change this to true if you use submodule for the docs
 
 jobs:
   deploy:
