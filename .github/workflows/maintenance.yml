@@ -52,7 +52,6 @@ jobs:
       run: uv python install
     - name: Install dependencies
       run: |
-        uv venv
         uv sync
     - name: Clean
       if: inputs.CLEAN
@@ -80,9 +79,7 @@ jobs:
     - name: Install python
       run: uv python install
     - name: Install dependencies
-      run: |
-        uv venv
-        uv sync --no-dev
+      run: uv sync --no-dev
     - name: Update lock
       run: uv lock --upgrade
     - name: Commit
