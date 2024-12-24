@@ -46,13 +46,12 @@ jobs:
           git config --global user.email "noreply@github.com"
           git commit -am "chore (update): fetch submodule"
           git push
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-          cache: "pip"
+      - name: Install python
+        run: uv python install
       - name: Install dependencies
-        run: uv sync --no-dev
+        run: |
+          uv venv
+          uv sync --no-dev
       - name: Build
         run: |
          uv run mkdocs gh-deploy --force
