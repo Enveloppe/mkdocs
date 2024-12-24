@@ -17,7 +17,9 @@ dependencies = [
     "mkdocs-custom-tags-attributes",
     "mkdocs-meta-descriptions-plugin",
     "mkdocs-glightbox",
-    "mkdocs-obsidian-links"
+    "mkdocs-obsidian-links",
+    "beautifulsoup4",
+    "babel"
 ]
 
 [tool.ruff.lint]
