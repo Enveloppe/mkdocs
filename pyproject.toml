@@ -33,4 +33,5 @@ inline-quotes = "double"
 [dependency-groups]
 dev = [
     "pydantic>=2.10.4",
+    "pyyaml>=6.0.2",
 ]

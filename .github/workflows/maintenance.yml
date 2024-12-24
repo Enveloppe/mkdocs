@@ -43,15 +43,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
       with:
-        python-version: 3.13
-        cache: pipenv
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+    - name: Install python
+      run: uv python install
+    - name: Install dependencies
+      run: |
+        uv venv
+        uv sync
     - name: Clean
       if: inputs.CLEAN
       run: |
        echo "Cleaning"
-       pipenv install pyyaml
        pipenv run python .github/find_unused_image.py
     - name: Commit
       if: inputs.CLEAN && inputs.DRY_RUN == false

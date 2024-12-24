@@ -99,6 +99,8 @@ name = "enveloppe-mkdocs"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "babel" },
+    { name = "beautifulsoup4" },
     { name = "mdx-breakless-lists" },
     { name = "mkdocs" },
     { name = "mkdocs-awesome-pages-plugin" },
@@ -117,10 +119,13 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pydantic" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "babel" },
+    { name = "beautifulsoup4" },
     { name = "mdx-breakless-lists" },
     { name = "mkdocs" },
     { name = "mkdocs-awesome-pages-plugin" },
@@ -137,7 +142,10 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pydantic", specifier = ">=2.10.4" }]
+dev = [
+    { name = "pydantic", specifier = ">=2.10.4" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+]
 
 [[package]]
 name = "ghp-import"
