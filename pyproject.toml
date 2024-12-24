@@ -27,3 +27,8 @@ exclude = ["tests", "docs", "build", "dist", "venv", "venv3", "venv3.6", "venv3.
 
 [tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
+
+[dependency-groups]
+dev = [
+    "pydantic>=2.10.4",
+]

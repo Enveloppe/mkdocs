@@ -38,13 +38,19 @@ on:
         required: false
         default: false
         type: boolean
+      submodule:
+        description: If you use submodule for the docs, set this to true
+        required: false
+        default: false
+        type: boolean
+          
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  run:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - name: Print github.event.inputs
@@ -57,17 +63,20 @@ jobs:
           echo "- language: ${{ github.event.inputs.language }}" >> $GITHUB_STEP_SUMMARY
           echo "- auto_h1: ${{ github.event.inputs.auto_h1 }}" >> $GITHUB_STEP_SUMMARY
           echo "- comments: ${{ github.event.inputs.comments }}" >> $GITHUB_STEP_SUMMARY
-          echo "- template_type: ${{ github.event.inputs.template_type }}" >> $GITHUB_STEP_SUMMARY
-          echo "ACT: ${{ env.ACT }}"
+          echo "- Submodule: ${{ github.event.inputs.submodule }}" >> $GITHUB_STEP_SUMMARY
       - name: checkout repo
         uses: actions/checkout@v4
       - name: Install python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+            enable-cache: true
+            cache-dependency-glob: "uv.lock"
       - name: Install dependencies
-        run: |
-          pip install pydantic requests
+        run: uv sync 
       - name: Format arguments
         id: args
         run:
@@ -132,3 +141,38 @@ jobs:
           if [[ $(git ls-remote --heads origin generate | wc -l) -eq 1 ]]; then
             git push origin --delete generate
           fi
+  publish:
+    runs-on: ubuntu-latest
+    needs: generate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          submodules: 'recursive'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+            enable-cache: true
+            cache-dependency-glob: "uv.lock"
+      - name: "Submodule fetching"
+        continue-on-error: true
+        if: ${{inputs.SUBMODULE}}
+        run: |
+          git submodule update --init --recursive --checkout -f --remote -- "docs"
+          git config --global user.name "GitHub Action"
+          git config --global user.email "noreply@github.com"
+          git commit -am "chore (update): fetch submodule"
+          git push
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: "pip"
+      - name: Install dependencies
+        run: uv sync --no-dev
+      - name: Build
+        run: |
+         uv run mkdocs gh-deploy --force
+         

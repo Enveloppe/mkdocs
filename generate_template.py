@@ -1,9 +1,7 @@
 import argparse
 from pathlib import Path
 from string import Template
-from typing import Literal
 
-import requests
 from pydantic import BaseModel
 
 
@@ -15,7 +13,8 @@ class TemplateModel(BaseModel):
     language: str
     auto_h1: bool
     comments: bool
-    generate_graph: bool = False
+    submodule: bool = False
+
 
 
 class Environment(BaseModel):
@@ -40,11 +39,12 @@ def main() -> None:
     parser.add_argument(
         "--comments", action="store_true", help="Enable comments on the site"
     )
+    parser.add_argument(
+        "--submodule", action="store_true", help="Enable submodule for the site, default is False")
 
     args = parser.parse_args()
 
     template = TemplateModel(
-        template_type=args.template,
         site_name=args.site_name,
         site_url=args.site_url,
         site_description=args.site_description,
@@ -52,7 +52,7 @@ def main() -> None:
         language=args.language,
         auto_h1=args.auto_h1,
         comments=args.comments,
-        generate_graph=True if args.template == "gh_pages" else False,
+        submodule=args.submodule if args.submodule else False
     )
     # download the files
     
@@ -68,17 +68,26 @@ def main() -> None:
         language=template.language,
         auto_h1=template.auto_h1,
         comments=template.comments,
-        generate_graph=template.generate_graph,
     )
-    
-    
     with mkdocs_yaml.open("w", encoding="UTF-8") as f:
         f.write(s)
-
     print("Mkdocs template generated:")
     print(s)
     print("Done!")
 
+    if template.submodule:
+        workflow_path = Path(".github/workflows/deploy.yml")
+        with workflow_path.open("r", encoding="UTF-8") as f:
+            workflow = f.read()
+        wf = Template(workflow)
+        subs = wf.substitute(
+            submodule=template.submodule
+        )
+        with workflow_path.open("w", encoding="UTF-8") as f:
+            f.write(subs)
+        print("Workflow template generated:")
+        print(subs)
+        print("Done!")
 
 if __name__ == "__main__":
     main()
