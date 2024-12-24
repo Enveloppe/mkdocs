@@ -1,0 +1,17 @@
+{% if page.meta %}
+    {% if page.meta["cssclasses"] and page.meta["cssclasses"]|length > 0 %}
+        {% if page.meta["cssclasses"] is iterable %}
+            {% for cssclasses in page.meta["cssclasses"] %}
+                <script>
+                    document.body.classList.add('{{ cssclasses }}');
+                    console.log('Added class {{ cssclasses }} to body on page {{ page.title }}');
+                </script>
+            {% endfor %}
+        {% else %}
+            <script>
+                document.body.classList.add('{{ page.meta["cssclasses"] }}');
+                console.log('Added class {{ page.meta["cssclasses"] }} to body on page {{ page.title }}');
+            </script>
+        {% endif %}
+    {% endif %}
+{% endif %}
