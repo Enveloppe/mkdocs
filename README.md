@@ -14,15 +14,32 @@
  - Click on "New repository secret"
  - Name: `GH_TOKEN`
  - Value: `<your token>`
-5. While in Settings, go to "Pages" and select "Deploy from a branch" and select `gh-pages` branch (from root)
 
-> [!warning]
-> You can publish a private repository as a public page in the free tier of GitHub. But you can use a private submodule as your docs folder and publish it as a public page.
 
 # Template generation 
 
 1. In Actions, go "Generate Website" and click on "Run workflow".
 2. Fill the items and click on "Run workflow"
 3. Wait for the workflow to finish
-4. Read and validate the pull request, merge it.
-5. You can now go into "Publish" and click on "Run workflow" to publish the website.
+
+If the auto-merging is not enabled:
+
+- Read and validate the pull request, merge it.
+- You can now go into "Publish" and click on "Run workflow" to publish the
+  website.
+
+# Enabling publishing with GH-Pages
+
+In the `Settings`, go into `Pages` and:
+
+- Set the **source** to "Deploy from a branch"
+- Select the `gh-pages` branch, from root:
+
+> [!warning]
+> You can't publish a private repository as a public page in the free tier of
+> GitHub. But you can use a private submodule as your docs folder and publish it
+> as a public page.
+> If so, don't forget to set the `GH_TOKEN` secrets and enable the submodules in
+> the `deploy.yml` file with setting `FETCH_SUBMODULE: true`
+
+
