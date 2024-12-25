@@ -14,9 +14,10 @@ options:
 """
 
 import argparse
-import yaml
-from pathlib import Path
 import re
+from pathlib import Path
+
+import yaml
 
 
 def create_category(path, index_contents):
@@ -81,8 +82,10 @@ def main():
     args = parser.parse_args()
 
     mkdocs_config = Path("mkdocs.yml").resolve()
+
     with open(mkdocs_config, "r", encoding="utf-8") as f:
         config = yaml.load(f, Loader=yaml.BaseLoader)
+
     docs_dir = config.get("docs_dir", "docs")
     docs_dir = Path(docs_dir).resolve()
     path, description_yaml, hider, description_contents = resolving_args(args, docs_dir)
