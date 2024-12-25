@@ -118,7 +118,7 @@
                             {% if category_exists %}
                                 {% set link = pg.meta.category | links %}
                                 {% set link = config.site_url ~ link ~ '/' %}
-                                {% set pg_category = '<a href="' ~ link ~ '">' ~ pg_category ~ '</a>' %}
+                                {% set pg_category = '<a class="post-link category" href="' ~ link ~ '">' ~ pg_category ~ '</a>' %}
                             {% endif %}
                         {% endif %}
                     {% endif %}
@@ -128,7 +128,7 @@
                 {% endif %}
                 <div class="post">
                     <h4 class="post-title">
-                        <a href="{{ pg.canonical_url }}">{{ pg_title }}</a>
+                        <a href="{{ pg.canonical_url }}" class="post-link title">{{ pg_title }}</a>
                     </h4>
                     <div class="post-info-wrap">
                         <div class="post-info">
