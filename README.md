@@ -17,7 +17,7 @@
 5. While in Settings, go to "Pages" and select "Deploy from a branch" and select `gh-pages` branch (from root)
 
 > [!warning]
-> You can publish a private repository as a public page in the free tier of GitHub. But you can use a private submodule as your docs folder and publish it as a public page.
+> You **can't** publish a private repository as a public page in the free tier of GitHub. But you can use a private submodule as your docs folder and publish it as a public page.
 
 # Template generation 
 
