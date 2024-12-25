@@ -35,6 +35,9 @@ In the `Settings`, go into `Pages` and:
 - Set the **source** to "Deploy from a branch"
 - Select the `gh-pages` branch, from root:
 
+![image](https://github.com/user-attachments/assets/d65b6391-fb91-4306-a6cd-215298beb8b5)
+
+
 > [!warning]
 > You can't publish a private repository as a public page in the free tier of
 > GitHub. But you can use a private submodule as your docs folder and publish it
