@@ -106,8 +106,7 @@
                     {% if pg.meta.banner %}
                         {% set pg_image = pg.meta.banner %}
                     {% elif pg.meta.image %}
-                        {% set attachmentsFolder = 'attachments' | value_in_frontmatter(config.extra) %}
-                        {% set attachmentsFolder = 'assets/img/' if attachmentsFolder is none else config.extra['attachments'] | regex_replace('/$', '') %}
+                        {% set attachmentsFolder = config | get_attachments_folder %}
                         {% set pg_image = config.site_url ~ attachmentsFolder ~ '/' ~ pg.meta.image %}
                     {% endif %}
                     {% if pg.meta.category %}

@@ -18,8 +18,7 @@
         {% set description = page.meta.description %}
     {% endif %}
     {% if page.meta.image %}
-        {% set attachmentsFolder = 'attachments' | value_in_frontmatter(config.extra) %}
-        {% set attachments = 'assets/img/' if attachmentsFolder is none else config.extra['attachments'] | regex_replace('/$', '') %}
+        {% set attachments = config | get_attachments_folder %}
         {% set image = config.site_url ~ attachments ~ "/" ~ page.meta.image %}
     {% elif page.meta.banner %}
         {% set image = page.meta.banner %}

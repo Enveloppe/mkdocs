@@ -7,7 +7,7 @@ from pathlib import Path
 import mkdocs.structure.pages
 from babel.dates import format_date
 from dateutil import parser
-
+from pydantic import BaseModel
 
 def get_last_part_URL(url):
     """Get the last part of an URL.
@@ -148,6 +148,47 @@ def value_in_frontmatter(key, metadata):
     else:
         return None
 
+def get_attachments_config(config):
+    DEFAULT_EXTENSION = [
+    ".avif",
+    ".bmp",
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".svg",
+    ".webp",
+    ".flac",
+    ".m4a",
+    ".mp3",
+    ".ogg",
+    ".wav",
+    ".webm",
+    ".3gp",
+    ".mkv",
+    ".mov",
+    ".mp4",
+    ".ogv",
+    ".webm",
+    ".pdf",
+    ]
+
+    class Attachments(BaseModel):
+        folder: str | Path | None = "assets/img/"
+        exclude: list[str] = []
+        extensions: list[str] = DEFAULT_EXTENSION
+
+    attachment_extra = config.get("extra", {}).get("attachments", {})
+    if not attachment_extra:
+        attachment_extra = Attachments()
+    if isinstance(attachment_extra, dict):
+        attachment_extra = Attachments(**attachment_extra)
+    else:
+        attachment_extra = Attachments(folder=attachment_extra)
+    return attachment_extra
+
+def get_attachments_folder(config):
+    return re.sub(r"\/$", "", get_attachments_config(config).folder)
 
 def icon_exists(path, config):
     path = Path(config["docs_dir"]) / "_assets" / path
@@ -197,4 +238,5 @@ def on_env(env, config, files, **kwargs):
     env.filters["replace_by_name"] = replace_by_name
     env.filters["first"] = first
     env.filters["links"] = links
+    env.filters["get_attachments_folder"] = get_attachments_folder
     return env
