@@ -11,5 +11,5 @@ def on_post_page(output, page, config) -> str:
             if attr != "href":
                 new_tag[attr] = a_tag[attr]
         new_tag["src"] = a_tag["href"]
-        a_tag.replaceWith(new_tag)
+        a_tag.replace_with(new_tag)
     return str(soup)
