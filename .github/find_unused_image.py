@@ -1,20 +1,21 @@
-from pathlib import Path
-import os
 import argparse
+from pathlib import Path
 from typing import Optional
+
 import yaml
 
 
-def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False):
+def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False) -> None:
     # load mkdocs.yml
-    with open("mkdocs.yml", "r", encoding="utf-8") as f:
+    file = Path("mkdocs.yml")
+    with file.open(mode="r", encoding="utf-8") as f:
         # remove all !! pairs from the yaml file
         data = f.read()
         data = data.replace("!!", "")
         config = yaml.safe_load(data)
 
     docs_dir = Path.cwd() / Path(config.get("docs_dir", "docs"))
-    assets_dir = Path(docs_dir, config["extra"]["attachments"])
+    assets_dir = Path(docs_dir, config["extra"]["attachments"]["folder"])
     print(f"Looking for unused images in {assets_dir}...")
     if img_path:
         assets_dir = img_path
@@ -22,7 +23,7 @@ def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False):
     images = [
         file
         for file in assets_dir.rglob("*")
-        if file.is_file() and file.suffix in [".png", ".jpg", ".jpeg", ".gif", ".svg"]
+        if file.is_file() and file.suffix in {".png", ".jpg", ".jpeg", ".gif", ".svg"}
     ]
     md_files = [file for file in docs_dir.rglob("*.md") if file.is_file()]
 
@@ -31,8 +32,9 @@ def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False):
     used_images = []
 
     for md_file in md_files:
+        file_path = Path(md_file)
         for image in images:
-            with open(md_file, "r", encoding="utf-8") as f:
+            with file_path.open("r", encoding="utf-8") as f:
                 if image.name in f.read():
                     used_images.append(image)
 
@@ -46,7 +48,7 @@ def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False):
         for image in unused_images:
             if not dry_run:
                 print(image)
-                os.remove(image)
+                Path(image).unlink()
             else:
                 print(f"Would delete {image}")
     else:
@@ -57,9 +59,7 @@ if __name__ == "__main__":
     # use argparse to get the path to the assets folder
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, help="Path to the assets folder")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Do not delete unused images"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Do not delete unused images")
     args = parser.parse_args()
     path = Path(args.path) if args.path else None
     find_unused_media(img_path=path, dry_run=args.dry_run)
