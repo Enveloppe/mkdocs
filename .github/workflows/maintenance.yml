@@ -25,6 +25,6 @@ jobs:
     if: ${{ success() }}
     uses: Enveloppe/wiki/.github/workflows/deploy.yml@main
     with:
-      FETCH_SUBMODULES: false #change this if you use submodules
+      FETCH_SUBMODULE: false #change this if you use submodules
     secrets:
       GH_PAT: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
