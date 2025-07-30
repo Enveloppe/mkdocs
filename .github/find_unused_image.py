@@ -15,7 +15,15 @@ def find_unused_media(img_path: Optional[Path] = None, dry_run: bool = False) ->
         config = yaml.safe_load(data)
 
     docs_dir = Path.cwd() / Path(config.get("docs_dir", "docs"))
-    assets_dir = Path(docs_dir, config["extra"]["attachments"]["folder"])
+    attachment_folder = config.get("extra", {}).get("attachments")
+    print(f"Using docs directory: {attachment_folder}")
+    if attachment_folder and isinstance(attachment_folder, dict):
+        attachment_folder = attachment_folder.get("folder")
+    if not attachment_folder and img_path:
+        attachment_folder = img_path
+    elif not attachment_folder:
+        raise ValueError("No attachment folder found in mkdocs.yml or provided as argument.")
+    assets_dir = Path(docs_dir, attachment_folder)
     print(f"Looking for unused images in {assets_dir}...")
     if img_path:
         assets_dir = img_path
